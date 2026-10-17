@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rzlabs.me/sitemap-index.xml

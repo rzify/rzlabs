@@ -1,0 +1,52 @@
+---
+// The rzlabs Pause mark. Pupils switch between pause bars and play triangles.
+// skin: 'ink' | 'linen' | 'blue' | 'spooky' | 'zoe'
+interface Props {
+  skin?: 'ink' | 'linen' | 'blue' | 'spooky' | 'zoe';
+  size?: number;
+  label?: string;
+}
+const { skin = 'ink', size = 40, label } = Astro.props;
+const HEAD = 'M20 40 L22 12 L42 28 Q50 26 58 28 L78 12 L80 40 Q86 49 86 58 Q86 88 50 88 Q14 88 14 58 Q14 49 20 40 Z';
+const skins = {
+  ink: { head: 'var(--rz-color-ink)', eye: 'var(--rz-color-linen)' },
+  linen: { head: 'var(--rz-color-linen)', eye: 'var(--rz-color-ink)' },
+  blue: { head: 'var(--rz-color-blue-fur)', eye: 'var(--rz-color-blue-eye)' },
+  spooky: { head: 'var(--rz-color-spooky-base)', eye: 'var(--rz-color-spooky-eye)' },
+  zoe: { head: 'var(--rz-color-zoe-smoke)', eye: 'var(--rz-color-zoe-eye)' },
+};
+const s = skins[skin];
+---
+<svg
+  class="mark"
+  viewBox="0 0 100 100"
+  width={size}
+  height={size}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+>
+  <path d={HEAD} fill={s.head} stroke={skin === 'blue' ? '#D3C8B8' : undefined} stroke-width={skin === 'blue' ? 2 : undefined} />
+  {skin === 'blue' && (
+    <>
+      <polygon points="21,26 22,12 33,21" fill="var(--rz-color-blue-points)" />
+      <polygon points="67,21 78,12 79,26" fill="var(--rz-color-blue-points)" />
+    </>
+  )}
+  {skin === 'spooky' && (
+    <g fill="var(--rz-color-spooky-stripe)">
+      <rect x="43.5" y="28" width="3" height="13" rx="1.5" />
+      <rect x="48.5" y="26" width="3" height="15" rx="1.5" />
+      <rect x="53.5" y="28" width="3" height="13" rx="1.5" />
+    </g>
+  )}
+  {skin === 'zoe' && <ellipse cx="50" cy="31" rx="5" ry="10" fill="var(--rz-color-zoe-peach)" />}
+  <g class="mark__pause" fill={s.eye}>
+    <rect x="35" y="48" width="8" height="22" rx="4" />
+    <rect x="57" y="48" width="8" height="22" rx="4" />
+  </g>
+  <g class="mark__play" fill={s.eye}>
+    <polygon points="35,48 47,59 35,70" />
+    <polygon points="57,48 69,59 57,70" />
+  </g>
+</svg>

@@ -1,0 +1,40 @@
+/* rzlabs brand tokens */
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap");
+
+:root {
+  --rz-color-linen: #EAE3D8;
+  --rz-color-linen-deep: #DDD4C6;
+  --rz-color-milk: #FBF8F3;
+  --rz-color-ink: #26211D;
+  --rz-color-text-secondary: #6A5848;
+  --rz-color-blue-fur: #FBF8F3;
+  --rz-color-blue-points: #E0B98F;
+  --rz-color-blue-eye: #6F8DB5;
+  --rz-color-spooky-base: #5E4C3B;
+  --rz-color-spooky-stripe: #1F1A16;
+  --rz-color-spooky-belly: #8A7560;
+  --rz-color-spooky-eye: #B3A25C;
+  --rz-color-zoe-smoke: #707176;
+  --rz-color-zoe-smoke-deep: #5E5F64;
+  --rz-color-zoe-peach: #D4A88C;
+  --rz-color-zoe-patch: #B98F78;
+  --rz-color-zoe-eye: #C2CB8C;
+  --rz-font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --rz-font-body: 'Geist', system-ui, sans-serif;
+  --rz-font-mono: 'Geist Mono', ui-monospace, monospace;
+  --rz-size-display-xl: 96px;
+  --rz-size-display-l: 72px;
+  --rz-size-display-m: 48px;
+  --rz-size-display-s: 32px;
+  --rz-size-body-l: 20px;
+  --rz-size-body-m: 16px;
+  --rz-size-body-s: 14px;
+  --rz-size-label: 13px;
+  --rz-size-caption: 12px;
+  --rz-radius-s: 12px;
+  --rz-radius-m: 16px;
+  --rz-radius-l: 24px;
+  --rz-radius-pill: 999px;
+  --rz-tracking-display: -0.04em;
+  --rz-tracking-label: 0.04em;
+}

@@ -1,0 +1,82 @@
+---
+// Each service card has a cat doing that job: Blue codes, Spooky builds a web page,
+// Zoe tweaks an easing curve, and all three make an animation together.
+interface Props { kind: 'software' | 'web' | 'motion' | 'animation' }
+const { kind } = Astro.props;
+const HEAD = 'M20 40 L22 12 L42 28 Q50 26 58 28 L78 12 L80 40 Q86 49 86 58 Q86 88 50 88 Q14 88 14 58 Q14 49 20 40 Z';
+const LOOK = {
+  blue: { fur: '#FBF8F3', far: '#F1E8DC', line: '#D3C8B8', eye: '#6F8DB5', tail: '#E0B98F', extra: '<polygon points="21,26 22,12 33,21" fill="#E0B98F"/><polygon points="67,21 78,12 79,26" fill="#E0B98F"/><ellipse cx="50" cy="77" rx="11" ry="7" fill="#E0B98F"/>', pattern: '' },
+  spooky: { fur: '#5E4C3B', far: '#4E3F31', line: '#1F1A16', eye: '#B3A25C', tail: '#5E4C3B', extra: '<polygon points="24,30 25,19 33,26" fill="#1F1A16"/><polygon points="67,26 75,19 76,30" fill="#1F1A16"/><rect x="43.5" y="30" width="3" height="12" rx="1.5" fill="#1F1A16"/><rect x="48.5" y="28" width="3" height="14" rx="1.5" fill="#1F1A16"/><rect x="53.5" y="30" width="3" height="12" rx="1.5" fill="#1F1A16"/>', pattern: '<rect x="44" y="34" width="8" height="16" rx="4" fill="#1F1A16"/><rect x="62" y="34" width="8" height="12" rx="4" fill="#1F1A16"/><rect x="80" y="34" width="8" height="16" rx="4" fill="#1F1A16"/>' },
+  zoe: { fur: '#707176', far: '#626368', line: '#4F5054', eye: '#C2CB8C', tail: '#707176', extra: '<ellipse cx="50" cy="31" rx="5" ry="10" fill="#D4A88C"/><ellipse cx="69" cy="37" rx="8" ry="5" fill="#D4A88C"/>', pattern: '<ellipse cx="46" cy="52" rx="13" ry="9" fill="#D4A88C"/><ellipse cx="90" cy="40" rx="8" ry="5" fill="#B98F78"/>' },
+} as const;
+type Cat = keyof typeof LOOK;
+// Side view, facing right, ground at y = 96. Parts carry classes so CSS can animate them.
+const cat = (n: Cat, cls = '') => {
+  const L = LOOK[n];
+  const leg = (x: number, fill: string, c: string) => `<rect class="${c}" x="${x}" y="60" width="12" height="36" rx="6" fill="${fill}" stroke="${L.line}" stroke-width="1.5"/>`;
+  return `<svg class="ss-cat ${cls}" viewBox="0 0 150 100" aria-hidden="true">
+    <ellipse cx="68" cy="97" rx="48" ry="3" fill="#26211D" opacity=".18"/>
+    ${leg(28, L.far, 'ss-leg ss-leg--b')}${leg(86, L.far, 'ss-leg ss-leg--b')}
+    <path class="ss-tail" d="M20 50 C 4 44 2 22 12 10" fill="none" stroke="${L.tail}" stroke-width="9" stroke-linecap="round"/>
+    <rect x="16" y="32" width="100" height="38" rx="19" fill="${L.fur}" stroke="${L.line}" stroke-width="1.5"/>${L.pattern}
+    <g class="ss-head" transform="translate(86 -6) scale(.5)"><path d="${HEAD}" fill="${L.fur}" stroke="${L.line}" stroke-width="3"/>${L.extra}
+      <rect x="36" y="48" width="8" height="22" rx="4" fill="${L.eye}"/><rect x="58" y="48" width="8" height="22" rx="4" fill="${L.eye}"/></g>
+    ${leg(40, L.fur, 'ss-leg ss-leg--f1')}${leg(98, L.fur, 'ss-leg ss-leg--f2')}
+  </svg>`;
+};
+---
+<div class={`ss ss--${kind}`} aria-hidden="true">
+  {kind === 'software' && (
+    <>
+      <div class="ss-laptop">
+        <div class="ss-laptop__screen">
+          <i style="--w:62%"></i><i style="--w:40%"></i><i style="--w:74%"></i><i style="--w:30%"></i><i style="--w:56%"></i>
+          <span class="ss-ai">✦ AI</span>
+        </div>
+        <div class="ss-laptop__base"></div>
+      </div>
+      <div class="ss-who ss-who--blue" set:html={cat('blue', 'is-typing')} />
+    </>
+  )}
+  {kind === 'web' && (
+    <>
+      <div class="ss-browser">
+        <div class="ss-browser__bar"><i></i><i></i><i></i><span>rzlabs.me</span></div>
+        <div class="ss-browser__page">
+          <b class="ss-blk ss-blk--nav"></b><b class="ss-blk ss-blk--hero"></b>
+          <b class="ss-blk ss-blk--c1"></b><b class="ss-blk ss-blk--c2"></b><b class="ss-blk ss-blk--c3"></b>
+        </div>
+      </div>
+      <div class="ss-who ss-who--spooky" set:html={cat('spooky', 'is-building')} />
+      <b class="ss-carry"></b>
+    </>
+  )}
+  {kind === 'motion' && (
+    <>
+      <div class="ss-graph">
+        <svg viewBox="0 0 200 120">
+          <path d="M10 110 H190 M10 110 V10" stroke="rgb(255 255 255 / .25)" stroke-width="1.5" fill="none"/>
+          <path d="M10 110 C 90 110 110 10 190 10" stroke="#C2CB8C" stroke-width="3" fill="none"/>
+          <path d="M10 110 L 90 110 M190 10 L 110 10" stroke="rgb(255 255 255 / .5)" stroke-width="1.2" stroke-dasharray="3 3"/>
+          <circle cx="90" cy="110" r="4" fill="#fff"/><circle cx="110" cy="10" r="4" fill="#fff"/>
+          <rect x="4" y="104" width="12" height="12" transform="rotate(45 10 110)" fill="#D4A88C"/><rect x="184" y="4" width="12" height="12" transform="rotate(45 190 10)" fill="#D4A88C"/>
+          <circle r="7" fill="#fff" class="ss-ball"><animateMotion dur="4.8s" repeatCount="indefinite" path="M10 110 C 90 110 110 10 190 10" keyPoints="0;1;1;0;0" keyTimes="0;.4;.5;.9;1" calcMode="spline" keySplines=".8 0 .2 1;0 0 1 1;.8 0 .2 1;0 0 1 1"/></circle>
+        </svg>
+        <i class="ss-dot"></i>
+        <span class="ss-ease">cubic-bezier(.8, 0, .2, 1)</span>
+      </div>
+      <div class="ss-who ss-who--zoe" set:html={cat('zoe', 'is-watching')} />
+    </>
+  )}
+  {kind === 'animation' && (
+    <>
+      <div class="ss-strip"><div class="ss-strip__run">{Array.from({ length: 12 }, (_, i) => <span>{String(i + 1).padStart(2, '0')}</span>)}</div></div>
+      <div class="ss-trio">
+        <div class="ss-who ss-who--a" set:html={cat('blue', 'is-hop')} />
+        <div class="ss-who ss-who--b" set:html={cat('spooky', 'is-hop')} />
+        <div class="ss-who ss-who--c" set:html={cat('zoe', 'is-hop')} />
+      </div>
+      <span class="ss-take">TAKE 3 OF 3 · ALL CATS ON SET</span>
+    </>
+  )}
+</div>

@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+const HEAD = 'M20 40 L22 12 L42 28 Q50 26 58 28 L78 12 L80 40 Q86 49 86 58 Q86 88 50 88 Q14 88 14 58 Q14 49 20 40 Z';
+---
+<Base title="404 — rzlabs" description="This page is asleep.">
+  <main class="lost">
+    <div>
+      <svg class="mark" viewBox="0 0 100 100" role="img" aria-label="The rzlabs cat, asleep">
+        <path d={HEAD} fill="var(--rz-color-ink)" />
+        <path d="M32 57 Q39 64 46 57" fill="none" stroke="var(--rz-color-linen)" stroke-width="4" stroke-linecap="round" />
+        <path d="M54 57 Q61 64 68 57" fill="none" stroke="var(--rz-color-linen)" stroke-width="4" stroke-linecap="round" />
+      </svg>
+      <h1>Nothing here.</h1>
+      <p class="label">The cats are asleep on this page.</p>
+      <p><a href="/">Wake them up →</a></p>
+    </div>
+  </main>
+</Base>
