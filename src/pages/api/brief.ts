@@ -42,11 +42,17 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       method: 'POST',
       body: new URLSearchParams({ secret, response: token, remoteip: ip }),
     }).then((r) => r.json()).catch(() => ({ success: false }));
-    if (!verify.success) return json(403, { ok: false, error: 'captcha' });
+    if (!verify.success) {
+      console.error('[brief] turnstile failed', { codes: verify['error-codes'], hostname: verify.hostname, hasToken: !!token });
+      return json(403, { ok: false, error: 'captcha' });
+    }
   }
 
   const key = env('RESEND_API_KEY'), to = env('BRIEF_TO'), from = env('BRIEF_FROM') ?? 'rzlabs <onboarding@resend.dev>';
-  if (!key || !to) return json(503, { ok: false, error: 'not_configured' });
+  if (!key || !to) {
+    console.error('[brief] not configured', { hasKey: !!key, hasTo: !!to });
+    return json(503, { ok: false, error: 'not_configured' });
+  }
 
   const subject = `${what.length ? what.join(' + ') : 'Hello'} — ${name}`;
   const text = [`${msg}`, '', `— ${name} <${email}>`, `What: ${what.join(', ') || '—'}`, `When: ${when || '—'}`, '', 'Brief taken by Blue, Spooky & Zoe at rzlabs.me'].join('\n');
@@ -59,7 +65,12 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     method: 'POST',
     headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ from, to: to.split(',').map((s) => s.trim()), reply_to: email, subject, text, html }),
-  }).catch(() => null);
-  if (!res || !res.ok) return json(502, { ok: false, error: 'send_failed' });
+  }).catch((e) => { console.error('[brief] resend unreachable', String(e)); return null; });
+  if (!res || !res.ok) {
+    // Resend's error body says what is wrong (unverified domain, bad key scope, bad from). It holds no secrets.
+    const detail = res ? await res.json().catch(() => ({})) as { name?: string; message?: string } : {};
+    console.error('[brief] resend failed', { status: res?.status, from, name: detail.name, message: detail.message });
+    return json(502, { ok: false, error: 'send_failed', reason: detail.name ?? 'unreachable' });
+  }
   return json(200, { ok: true });
 };

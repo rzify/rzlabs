@@ -212,6 +212,11 @@ export function initChat() {
   // ---------- Turnstile (spam check), loaded only when the letter is ready ----------
   const SITE_KEY = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undefined;
   let token = '';
+  let gotToken: (t: string) => void = () => {};
+  let tokenReady = new Promise<string>((r) => { gotToken = r; });
+  const setToken = (t: string) => { token = t; if (t) gotToken(t); else tokenReady = new Promise<string>((r) => { gotToken = r; }); };
+  // Wait for the spam check to finish (it is invisible for most people), but never forever.
+  const waitToken = (ms: number) => (!SITE_KEY || token ? Promise.resolve(token) : Promise.race([tokenReady, new Promise<string>((r) => setTimeout(() => r(token), ms))]));
   type TS = { render: (el: HTMLElement, o: Record<string, unknown>) => string; reset: (id?: string) => void };
   const turnstile = () => new Promise<TS | null>((ok) => {
     if (!SITE_KEY) return ok(null);
@@ -228,7 +233,8 @@ export function initChat() {
     const slot = document.createElement('div');
     slot.className = 'chat__guard';
     row.appendChild(slot);
-    ts.render(slot, { sitekey: SITE_KEY, appearance: 'interaction-only', theme: 'dark', callback: (t: string) => { token = t; } });
+    ts.render(slot, { sitekey: SITE_KEY, appearance: 'interaction-only', theme: 'dark', callback: (t: string) => setToken(t),
+      'expired-callback': () => setToken(''), 'error-callback': () => { setToken(''); console.warn('[brief] turnstile error'); } });
   };
   new MutationObserver(() => { const row = box.querySelector<HTMLElement>('.chat__send'); if (row && !row.dataset.guarded) { row.dataset.guarded = '1'; guard(row); } })
     .observe(box, { childList: true });
@@ -244,9 +250,11 @@ export function initChat() {
     const honey = form.querySelector<HTMLInputElement>('[name="website"]')?.value ?? '';
     let ok = false;
     try {
+      await waitToken(10_000);
       const r = await fetch('/api/brief', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...a, token, website: honey }) });
       ok = r.ok;
-    } catch { ok = false; }
+      if (!ok) console.warn('[brief]', r.status, await r.text().catch(() => ''));
+    } catch (e) { ok = false; console.warn('[brief] network', e); }
     findSecret('letter');
     box.innerHTML = '';
     const letter = document.createElement('div');
