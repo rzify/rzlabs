@@ -1,5 +1,5 @@
 /* rzlabs brand tokens */
-@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap");
+/* Fonts load from <head> in Base.astro (preconnect + stylesheet), not via @import. */
 
 :root {
   --rz-color-linen: #EAE3D8;

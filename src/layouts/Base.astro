@@ -8,9 +8,38 @@ interface Props {
   description?: string;
 }
 const {
-  title = 'rzlabs — code & motion studio',
-  description = 'rzlabs is a code & motion studio: software, web, motion and animation. Built by one human, supervised by three cats.',
+  title = 'rzlabs — software, web & motion studio',
+  description = 'rzlabs is a small code & motion studio: AI and software, websites, motion design and animation. Built by one human, supervised by three cats.',
 } = Astro.props;
+
+const SITE = 'https://rzlabs.me/';
+// Structured data: who the studio is and what it offers. Only facts already on the page.
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'ProfessionalService',
+      '@id': `${SITE}#studio`,
+      name: 'rzlabs',
+      url: SITE,
+      logo: `${SITE}icon-512.png`,
+      image: `${SITE}og.png`,
+      email: 'hello@rzlabs.me',
+      description,
+      slogan: 'Software that moves.',
+      founder: { '@type': 'Person', '@id': `${SITE}#fabio`, name: 'Fábio', url: SITE },
+      knowsAbout: ['AI', 'Software development', 'Web development', 'Motion design', 'Animation'],
+      hasOfferCatalog: {
+        '@type': 'OfferCatalog',
+        name: 'Services',
+        itemListElement: ['AI & software', 'Websites', 'Motion design', 'Animation'].map((name) => ({
+          '@type': 'Offer', itemOffered: { '@type': 'Service', name },
+        })),
+      },
+    },
+    { '@type': 'WebSite', '@id': `${SITE}#website`, url: SITE, name: 'rzlabs', inLanguage: 'en', publisher: { '@id': `${SITE}#studio` } },
+  ],
+};
 ---
 <!doctype html>
 <html lang="en">
@@ -19,6 +48,9 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script is:inline>document.documentElement.classList.add("js");</script>
     <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" />
     <meta name="description" content={description} />
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" id="favicon" />
@@ -28,7 +60,7 @@ const {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://rzlabs.me" />
+    <meta property="og:url" content={SITE} />
     <meta property="og:site_name" content="rzlabs" />
     <meta property="og:image" content="https://rzlabs.me/og.png" />
     <meta property="og:image:width" content="1200" />
@@ -36,7 +68,11 @@ const {
     <meta property="og:image:alt" content="rzlabs — Blue, Spooky and Zoe, the studio's three cats" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="https://rzlabs.me/og.png" />
-    <link rel="canonical" href="https://rzlabs.me/" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="author" content="Fábio · rzlabs" />
+    <link rel="canonical" href={SITE} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <link rel="sitemap" href="/sitemap-index.xml" />
   </head>
   <body>
