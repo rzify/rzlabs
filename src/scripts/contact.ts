@@ -124,7 +124,9 @@ export function initChat() {
       const row = document.createElement('div');
       row.className = 'chat__send';
       row.innerHTML = `<div class="letter" aria-label="Your brief"><span class="letter__stamp">approved<br>by zoe</span><b>To: ${TO}</b><p>${esc(subject())}</p><small>${esc(a.msg).slice(0, 140)}${a.msg.length > 140 ? '…' : ''}</small></div>`;
-      const send = Object.assign(document.createElement('button'), { type: 'submit', className: 'btn btn--linen', textContent: 'Send it' });
+      // With a spam check configured, Send stays locked until Turnstile hands us a token.
+      const locked = !!SITE_KEY && !token;
+      const send = Object.assign(document.createElement('button'), { type: 'submit', className: 'btn btn--linen', textContent: locked ? 'Checking you’re human…' : 'Send it', disabled: locked });
       const redo = Object.assign(document.createElement('button'), { type: 'button', className: 'chat__redo', textContent: 'Start over' });
       redo.addEventListener('click', reset);
       row.append(send, redo);
@@ -214,7 +216,15 @@ export function initChat() {
   let token = '';
   let gotToken: (t: string) => void = () => {};
   let tokenReady = new Promise<string>((r) => { gotToken = r; });
-  const setToken = (t: string) => { token = t; if (t) gotToken(t); else tokenReady = new Promise<string>((r) => { gotToken = r; }); };
+  const lockSend = (locked: boolean) => {
+    const b = box.querySelector<HTMLButtonElement>('.chat__send .btn');
+    if (b && b.textContent !== 'Sending…') { b.disabled = locked; b.textContent = locked ? 'Checking you’re human…' : 'Send it'; }
+  };
+  const setToken = (t: string) => {
+    token = t;
+    if (t) gotToken(t); else tokenReady = new Promise<string>((r) => { gotToken = r; });
+    lockSend(!t);
+  };
   // Wait for the spam check to finish (it is invisible for most people), but never forever.
   const waitToken = (ms: number) => (!SITE_KEY || token ? Promise.resolve(token) : Promise.race([tokenReady, new Promise<string>((r) => setTimeout(() => r(token), ms))]));
   type TS = { render: (el: HTMLElement, o: Record<string, unknown>) => string; reset: (id?: string) => void };
@@ -229,7 +239,8 @@ export function initChat() {
   });
   const guard = async (row: HTMLElement) => {
     const ts = await turnstile();
-    if (!ts) return;
+    // Script blocked or no key: unlock, the server decides (and mailto stays as the fallback).
+    if (!ts) return lockSend(false);
     const slot = document.createElement('div');
     slot.className = 'chat__guard';
     row.appendChild(slot);
@@ -246,6 +257,7 @@ export function initChat() {
 
   const send = async () => {
     const btn = box.querySelector<HTMLButtonElement>('.chat__send .btn');
+    if (SITE_KEY && !token && btn?.disabled) return;
     if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
     const honey = form.querySelector<HTMLInputElement>('[name="website"]')?.value ?? '';
     let ok = false;

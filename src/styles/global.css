@@ -1142,3 +1142,6 @@ textarea.chat__field { min-height: 110px; resize: vertical; }
 .chat__honey { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 .chat__guard { flex: 1 0 100%; min-height: 0; }
 .chat { position: relative; }
+
+/* v1.8 — Send waits for the spam check */
+.chat__send .btn:disabled { opacity: .55; cursor: progress; transform: none; }

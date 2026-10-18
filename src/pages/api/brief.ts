@@ -12,7 +12,8 @@ const recent = new Map<string, number[]>(); // best-effort rate limit per warm i
 
 const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
-const env = (k: string) => (import.meta.env[k] as string | undefined) ?? process.env[k];
+// Trim and drop wrapping quotes: values pasted as "rzlabs <hello@rzlabs.me>" would make Resend reject the sender.
+const env = (k: string) => ((import.meta.env[k] as string | undefined) ?? process.env[k])?.trim().replace(/^(['"])(.*)\1$/, '$2') || undefined;
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
   let data: Record<string, unknown>;
