@@ -243,7 +243,8 @@ export function initChat() {
     if (!ts) return lockSend(false);
     const slot = document.createElement('div');
     slot.className = 'chat__guard';
-    row.appendChild(slot);
+    // Check first, then send: the widget sits between the letter and the buttons.
+    row.insertBefore(slot, row.querySelector('.btn'));
     ts.render(slot, { sitekey: SITE_KEY, appearance: 'interaction-only', theme: 'dark', callback: (t: string) => setToken(t),
       'expired-callback': () => setToken(''), 'error-callback': () => { setToken(''); console.warn('[brief] turnstile error'); } });
   };
