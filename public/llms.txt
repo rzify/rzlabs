@@ -1,0 +1,25 @@
+# rzlabs
+
+> rzlabs is a small code & motion studio run by Fábio: AI products and software, websites, motion design and animation. One human, supervised by three cats (Blue, Spooky and Zoe).
+
+Website: https://rzlabs.me
+Contact: hello@rzlabs.me (or the brief form at https://rzlabs.me/#contact)
+Language: English
+
+## Services
+
+- Software: AI products, apps and internal tools. Lately, mostly AI.
+- Web: websites with a bit of life in them, like rzlabs.me.
+- Motion: product videos, UI animation and motion design.
+- Animation: characters, loops and short animated pieces.
+
+## Selected work
+
+- [ObraXRAY](https://obraxray.com): checks Portuguese construction companies against official public records before you sign. Fábio is CTO & co-founder and built the product.
+- [TheCattleyaStudio](https://bycattleyastudio.com): swimwear brand. Fábio is co-founder and built the tech behind it.
+- [KeybindStudios](https://keybindstudios.com): animation studio. Fábio is co-founder (product, animation and a bit of everything else) and built keybindstudios.com.
+- [Hypnotic](https://hypnoticagency.com): Fábio has been a full stack developer there for the past few years.
+
+## About the site
+
+rzlabs.me is built with Astro, GSAP and Lenis and hosted on Vercel. The three cats roam the page, take the project brief in a chat, and record a short replay of your visit.
